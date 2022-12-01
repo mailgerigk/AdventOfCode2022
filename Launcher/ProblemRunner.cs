@@ -29,7 +29,7 @@ internal class ProblemRunner
         foreach (var (method, attribute) in methodPairs)
         {
             var input = InputCache.GetInput(attribute.Year, attribute.Day);
-            var invokeReturn = method.Invoke(null, new[] { input });
+            var invokeReturn = method.Invoke(null, new[] { InputTransformation.TryTransform(method.GetParameters()[0].ParameterType, input) });
             if(invokeReturn is string answer)
             {
                 var result = new ProblemResult(attribute.Year, attribute.Day, attribute.Level, SolutionCache.SubmitSolution(attribute.Year, attribute.Day, attribute.Level, answer));

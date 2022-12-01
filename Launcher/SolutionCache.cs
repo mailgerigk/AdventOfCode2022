@@ -27,7 +27,10 @@ internal class SolutionCache
 
         var localPath = GetLocalPath(year, day, level);
         if (File.Exists(localPath))
-            return true;
+        {
+            var correctAnswer = File.ReadAllText(localPath);
+            return correctAnswer == answer;
+        }    
 
         var input = Network.Post($"https://adventofcode.com/{year}/day/{day}/answer", level, answer);
         if (input.Contains("That's the right answer"))
