@@ -11,28 +11,46 @@ internal class ProblemRunner
 {
     public record struct ProblemResult(int Year, int Day, int Level, bool Result);
 
-    public static ImmutableArray< ProblemResult> Run()
+    static (int year, int day)? ParseYearDay(string name)
     {
-        var methodPairs = AppDomain.CurrentDomain
-            .GetAssemblies()
-            .SelectMany(assembly => assembly.GetTypes())
-            .SelectMany(type => type.GetMethods())
-            .Where(method => method.IsStatic)
-            .Where(method => method.GetCustomAttribute<DayLevelAttribute>() is not null)
-            .Select(method => (method, method.GetCustomAttribute<DayLevelAttribute>()!))
-            .OrderBy(pair => pair.Item2.Year)
-            .ThenBy(pair => pair.Item2.Day)
-            .ThenBy(pair => pair.Item2.Level)
-            .ToList();
+        if (!name.StartsWith("Launcher.Problems"))
+            return null;
+        var splits = name.Split('.');
+        if (splits.Length < 2)
+            return null;
+        if (!splits.Last().StartsWith("Day") || splits.Last().Contains("+"))
+            return null;
+        var day = int.Parse(splits.Last().Substring("Day".Length));
+        if (!splits[^2].StartsWith("_"))
+            return null;
+        var year = int.Parse(splits[^2].Substring("_".Length));
+        return (year, day);
+    }
+
+    public static ImmutableArray<ProblemResult> Run()
+    {
+        var tuples = new List<(Type type, MethodInfo method, int year, int day, int level)>();
+        foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes()))
+        {
+            if (ParseYearDay(type.FullName!) is (int year, int day))
+            {
+                for (int i = 1; i < 3; i++)
+                {
+                    if (type.GetMethod($"Part{i}") is MethodInfo method && method.IsStatic)
+                        tuples.Add((type, method, year, day, i));
+                }
+            }
+        }
+        tuples = tuples.OrderBy(t => t.year).ThenBy(t => t.day).ThenBy(t => t.level).ToList();
 
         var results = ImmutableArray.CreateBuilder<ProblemResult>();
-        foreach (var (method, attribute) in methodPairs)
+        foreach (var (type, method, year, day, level) in tuples)
         {
-            var input = InputCache.GetInput(attribute.Year, attribute.Day);
+            var input = InputCache.GetInput(year, day);
             var invokeReturn = method.Invoke(null, new[] { InputTransformation.TryTransform(method.GetParameters()[0].ParameterType, input) });
-            if(invokeReturn is string answer)
+            if (invokeReturn is string answer)
             {
-                var result = new ProblemResult(attribute.Year, attribute.Day, attribute.Level, SolutionCache.SubmitSolution(attribute.Year, attribute.Day, attribute.Level, answer));
+                var result = new ProblemResult(year, day, level, SolutionCache.SubmitSolution(year, day, level, answer));
                 results.Add(result);
             }
         }
