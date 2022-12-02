@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -9,15 +10,19 @@ using System.Threading.Tasks;
 namespace Launcher;
 internal class InputTransformation
 {
-    public static object? TryTransform(Type targetType, string input)
+    public static object? TryTransform(ParameterInfo parameter, Type targetType, string input)
     {
+        StringSplitOptions splitOptions= StringSplitOptions.None;
+        if (parameter.GetCustomAttribute<RemoveEmptyAttribute>() is not null)
+            splitOptions |= StringSplitOptions.RemoveEmptyEntries;
+
         if (targetType == typeof(string))
         {
             return input;
         }
         if (targetType == typeof(string[]))
         {
-            return input.Split('\n', StringSplitOptions.TrimEntries);
+            return input.Split('\n', StringSplitOptions.TrimEntries | splitOptions);
         }
         if (targetType == typeof(int[]))
         {
