@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 namespace Launcher;
 internal class InputTransformation
 {
-    public static object? TryTransform(ParameterInfo parameter, Type targetType, string input)
+    public static object? TryTransform(ParameterInfo? parameter, Type targetType, string input)
     {
         StringSplitOptions splitOptions= StringSplitOptions.None;
-        if (parameter.GetCustomAttribute<RemoveEmptyAttribute>() is not null)
+        if (parameter is not null && parameter.GetCustomAttribute<RemoveEmptyAttribute>() is not null)
             splitOptions |= StringSplitOptions.RemoveEmptyEntries;
 
         if (targetType == typeof(string))
@@ -53,7 +53,7 @@ internal class InputTransformation
             foreach (var item in input.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
             {
                 var entry = new List<int>();
-                foreach (Match match in Regex.Matches(item, "[+-]?%d+"))
+                foreach (Match match in Regex.Matches(item, "[+-]?\\d+"))
                 {
                     entry.Add(int.Parse(match.Value));
                 }

@@ -49,13 +49,18 @@ internal class ProblemRunner
         foreach (var (type, method, year, day, level) in tuples)
         {
             var input = InputCache.GetInput(year, day);
-            var transformedInput = new[] { InputTransformation.TryTransform(method.GetParameters()[0], method.GetParameters()[0].ParameterType, input) };
+            var argumentList = new List<object>();
+            foreach (var parameter in method.GetParameters())
+            {
+                argumentList.Add(InputTransformation.TryTransform(parameter, parameter.ParameterType, input)!);
+            }
+            var arguments = argumentList.ToArray();
             object? invokeReturn = null;
             stopwatch.Restart();
             int Repetitions = benchmark ? 10_000 : 1;
             for (int i = 0; i < Repetitions; i++)
             {
-                invokeReturn = method.Invoke(null, transformedInput);
+                invokeReturn = method.Invoke(null, arguments);
             }
             stopwatch.Stop();
             if (invokeReturn is string answer)
