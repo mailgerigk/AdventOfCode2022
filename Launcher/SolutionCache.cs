@@ -8,13 +8,20 @@ using System.Threading.Tasks;
 namespace Launcher;
 internal class SolutionCache
 {
+    public enum PostResult
+    {
+        Right,
+        Wrong,
+        RateLimited,
+    }
+
     static string SolutionBasePath => Path.Combine(Paths.BasePath, "solutions");
     static string BadSolutionsPath => Path.Combine(SolutionBasePath, "bad");
 
     static string GetLocalPath(int year, int day, int level) => Path.Combine(SolutionBasePath, year.ToString(), $"{day}_{level}.txt");
     static string GetBadLocalPath(int year, int day, int level) => Path.Combine(BadSolutionsPath, year.ToString(), $"{day}_{level}.txt");
 
-    public static bool SubmitSolution(int year, int day, int level, string answer)
+    public static PostResult SubmitSolution(int year, int day, int level, string answer)
     {
         var badLocalPath = GetBadLocalPath(year, day, level);
         string[] badAnswers= new string[0];
@@ -22,14 +29,14 @@ internal class SolutionCache
         {
             badAnswers = File.ReadAllLines(badLocalPath);
             if (badAnswers.Contains(answer))
-                return false;
+                return PostResult.Wrong;
         }
 
         var localPath = GetLocalPath(year, day, level);
         if (File.Exists(localPath))
         {
             var correctAnswer = File.ReadAllText(localPath);
-            return correctAnswer == answer;
+            return correctAnswer == answer ? PostResult.Right : PostResult.Wrong;
         }    
 
         var input = Network.Post($"https://adventofcode.com/{year}/day/{day}/answer", level, answer);
@@ -37,12 +44,16 @@ internal class SolutionCache
         {
             new FileInfo(localPath).Directory!.Create();
             File.WriteAllText(localPath, answer);
-            return true;
+            return PostResult.Right;
+        }
+        else if(input.Contains("You gave an answer too recently;"))
+        {
+            return PostResult.RateLimited;
         }
 
         badAnswers = badAnswers.Union(new[] { answer }).ToArray();
         new FileInfo(badLocalPath).Directory!.Create();
         File.WriteAllLines(badLocalPath, badAnswers);
-        return false;
+        return PostResult.Wrong;
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Launcher;
 internal class ProblemRunner
 {
-    public record struct ProblemResult(int Year, int Day, int Level, bool Result, TimeSpan Time, int Repetitions);
+    public record struct ProblemResult(int Year, int Day, int Level, SolutionCache.PostResult Result, TimeSpan Time, int Repetitions);
 
     static (int year, int day)? ParseYearDay(string name)
     {
