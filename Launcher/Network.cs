@@ -23,11 +23,21 @@ internal class Network
         }
     }
 
+    static string? _useragent;
+    static string UserAgent
+    {
+        get
+        {
+            _useragent ??= File.ReadAllText(UserAgentPath);
+            return _useragent;
+        }
+    }
+
     public static string Get(string url)
     {
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Add("cookie", $"session={Cookie}");
-        request.Headers.TryAddWithoutValidation("User-Agent", File.ReadAllText(UserAgentPath));
+        request.Headers.TryAddWithoutValidation("User-Agent", UserAgent);
 
         var response = Client.Send( request );
         var responseTask = response.Content.ReadAsStringAsync();
@@ -39,7 +49,7 @@ internal class Network
     {
         var request = new HttpRequestMessage(HttpMethod.Post, url);
         request.Headers.Add("cookie", $"session={Cookie}");
-        request.Headers.TryAddWithoutValidation("User-Agent",File.ReadAllText(UserAgentPath));
+        request.Headers.TryAddWithoutValidation("User-Agent", UserAgent);
         request.Content = new FormUrlEncodedContent(
             new[]
             {
