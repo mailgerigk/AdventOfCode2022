@@ -28,6 +28,10 @@ internal class InputTransformation
         {
             return input.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
         }
+        if(targetType == typeof(int[][]))
+        {
+            return input.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(line => line.Select(c => c - '0').ToArray()).ToArray();
+        }
         if (targetType == typeof(List<int[]>))
         {
             var result = new List<int[]>();
