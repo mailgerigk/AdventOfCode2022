@@ -25,6 +25,7 @@ foreach (var result in results)
     };
     Console.Write(text);
     Console.ResetColor();
-    Console.WriteLine($"] {result.Year} {result.Day:00} {result.Level} {result.Time} @ {result.Repetitions} Reps");
+    var exampleString = result.IsExample ? " Example" : "";
+    Console.WriteLine($"] {result.Year} {result.Day:00} {result.Level} {result.Time} @ {result.Repetitions} Reps {exampleString}");
 }
 RainbowConsoleText.AnimateLine($"[Total time: {stopwatch.Elapsed}]");

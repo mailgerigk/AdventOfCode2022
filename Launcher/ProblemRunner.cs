@@ -4,13 +4,14 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Launcher;
 internal class ProblemRunner
 {
-    public record struct ProblemResult(int Year, int Day, int Level, SolutionCache.PostResult Result, TimeSpan Time, int Repetitions);
+    public record struct ProblemResult(int Year, int Day, int Level, SolutionCache.PostResult Result, TimeSpan Time, int Repetitions, bool IsExample);
 
     static (int year, int day)? ParseYearDay(string name)
     {
@@ -48,27 +49,55 @@ internal class ProblemRunner
         var stopwatch = new Stopwatch();
         foreach (var (type, method, year, day, level) in tuples)
         {
+            if(method.GetCustomAttribute<ExampleAttribute>() is ExampleAttribute example)
+            {
+                RunMethodWithInput(example.Input, example.Expected, true);
+            }
+
             var input = InputCache.GetInput(year, day);
-            var argumentList = new List<object>();
-            foreach (var parameter in method.GetParameters())
+            RunMethodWithInput(input, null, false);
+
+            void RunMethodWithInput(string input, string? output, bool isExample)
             {
-                argumentList.Add(InputTransformation.TryTransform(parameter, parameter.ParameterType, input)!);
-            }
-            var arguments = argumentList.ToArray();
-            object? invokeReturn = null;
-            stopwatch.Restart();
-            int Repetitions = benchmark ? 10_000 : 1;
-            for (int i = 0; i < Repetitions; i++)
-            {
-                invokeReturn = method.Invoke(null, arguments);
-            }
-            stopwatch.Stop();
-            if (invokeReturn is string answer)
-            {
-                var result = new ProblemResult(year, day, level, SolutionCache.SubmitSolution(year, day, level, answer), stopwatch.Elapsed / Repetitions, Repetitions);
-                results.Add(result);
+                var argumentList = new List<object>();
+                foreach (var parameter in method.GetParameters())
+                {
+                    if(parameter.ParameterType == typeof(bool))
+                    {
+                        argumentList.Add(isExample);
+                    }
+                    else
+                    {
+                        argumentList.Add(InputTransformation.TryTransform(parameter, parameter.ParameterType, input)!);
+                    }
+                }
+                var arguments = argumentList.ToArray();
+                object? invokeReturn = null;
+                stopwatch.Restart();
+                int Repetitions = benchmark && !isExample ? 10_000 : 1;
+                for (int i = 0; i < Repetitions; i++)
+                {
+                    invokeReturn = method.Invoke(null, arguments);
+                }
+                stopwatch.Stop();
+                if (invokeReturn is string answer)
+                {
+                    var postResult = SolutionCache.PostResult.Wrong;
+                    if(output is string)
+                    {
+                        postResult = answer == output ? SolutionCache.PostResult.Right : SolutionCache.PostResult.Wrong;
+                    }
+                    else
+                    {
+                        postResult = SolutionCache.SubmitSolution(year, day, level, answer);
+                    }
+                    var result = new ProblemResult(year, day, level, postResult, stopwatch.Elapsed / Repetitions, Repetitions, isExample);
+                    results.Add(result);
+                }
             }
         }
         return results.ToImmutable();
+
+        
     }
 }
