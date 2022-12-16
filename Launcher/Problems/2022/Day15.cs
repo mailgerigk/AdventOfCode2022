@@ -70,48 +70,65 @@ internal class Day15
             max = 20;
         }
 
-        var ranges = new (int a, int b)[sensors.Length];
-        for (int y = min; y < max; ++y)
+        for (int i = 0; i < sensors.Length; i++)
         {
-            for (int i = 0; i < sensors.Length; i++)
-            {
-                ranges[i] = (int.MaxValue, int.MaxValue);
-                var deltaX = distances[i] - Math.Abs(sensors[i].y - y);
-                if (deltaX <= 0)
-                    continue;
+            var sensor = sensors[i];
+            var distance = distances[i];
+            var delta = distance + 1;
 
-                ranges[i] = (sensors[i].x - deltaX, sensors[i].x + deltaX);
-            }
+            var left = (x:sensor.x - delta, y:sensor.y);
+            var right = (x:sensor.x + delta, y:sensor.y);
+            var top = (x:sensor.x, y:sensor.y + delta);
+            var bottom = (x:sensor.x, y:sensor.y - delta);
 
-            for (int i = 0; i < ranges.Length; i++)
+            var lines = new[]
             {
-                for (int j = 0; j < ranges.Length; j++)
+                (left, top),
+                (left, bottom),
+                (top, right),
+                (bottom, right),
+            };
+
+            foreach (var line in lines)
+            {
+                var (from, to) = line;
+                var diff = (x:from.x < to.x ? 1 : - 1, y:from.y < to.y ? 1 : -1);
+
+                var current = from;
+                var count = Math.Abs(from.x - to.x);
+                while (count > 0)
                 {
-                    if (ranges[i].a == int.MaxValue && ranges[j].a != int.MaxValue)
-                        ranges[i] = ranges[j];
-                    else if (ranges[j].a == int.MaxValue && ranges[i].a != int.MaxValue)
-                        ranges[j] = ranges[i];
-
-                    var r = Merge(ranges[i], ranges[j]);
-                    if (r.a == int.MaxValue)
-                        continue;
-                    ranges[i] = r;
-                    ranges[j] = r;
-                    if (r.a <= min && max <= r.b)
-                        goto next;
+                    if (min <= current.x && current.x <= max && min <= current.y && current.y <= max)
+                    {
+                        for (int j = 0; j < sensors.Length; j++)
+                        {
+                            var sensorDistance = Distance(sensors[j], current);
+                            if (sensorDistance <= distances[j])
+                            {
+                                var gamma = Math.Max( (distances[j] - sensorDistance) / 2 - 1, 0);
+                                gamma = Math.Min(gamma, count - 1);
+                                count -= gamma;
+                                current = (current.x + diff.x * gamma, current.y + diff.y * gamma);
+                                goto next;
+                            }
+                        }
+                        return ((ulong)current.x * 4000000ul + (ulong)current.y).ToString();
+                    }
+                    else
+                    {
+                        var gamma = Math.Min(Distance((min, min), current), Distance((max, max), current));
+                        gamma = Math.Min(gamma, count - 1);
+                        count -= gamma;
+                        current = (current.x + diff.x * gamma, current.y + diff.y * gamma);
+                    }
+                next:
+                    current = (current.x + diff.x, current.y + diff.y);
+                    count -= 1;
                 }
             }
-            if (ranges[0].a > min || ranges[0].b < max)
-            {
-                var x= ranges[0].a <= min ? ranges[0].b + 1 : ranges[0].a - 1;
-                return ((ulong)x * 4000000ul + (ulong)y).ToString();
-            }
-        next:
-            continue;
         }
         throw new InvalidDataException();
 
         static int Distance((int x, int y) a, (int x, int y) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
-        static (int a, int b) Merge((int a, int b) a, (int a, int b) b) => (a.a <= b.a && b.a <= a.b) ? (a.a, Math.Max(a.b, b.b)) : (b.a <= a.a && a.a <= b.b) ? (b.a, Math.Max(b.b, a.b)) : (int.MaxValue, int.MaxValue);
     }
 }
