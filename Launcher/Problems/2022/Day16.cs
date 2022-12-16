@@ -98,11 +98,18 @@ internal class Day16
             {
                 for (int midNodeIndex = 0; midNodeIndex < nodes.Length; midNodeIndex++)
                 {
+                    if (startNodeIndex == midNodeIndex)
+                        continue;
+
                     for (int endNodeIndex = 0; endNodeIndex < nodes.Length; endNodeIndex++)
                     {
+                        if (startNodeIndex == endNodeIndex)
+                            continue;
+
                         if (distances[startNodeIndex, midNodeIndex] + distances[midNodeIndex, endNodeIndex] < distances[startNodeIndex, endNodeIndex])
                         {
                             distances[startNodeIndex, endNodeIndex] = distances[startNodeIndex, midNodeIndex] + distances[midNodeIndex, endNodeIndex];
+                            distances[endNodeIndex, startNodeIndex] = distances[startNodeIndex, endNodeIndex];
                             changes = true;
                         }
                     }
@@ -111,46 +118,42 @@ internal class Day16
         }
         while (changes);
 
-        var flowPositive = Enumerable.Range(0,flow.Length).Where(i => flow[i] > 0).ToArray();
         var first = nodes.ToList().IndexOf("AA");
-        var opened = new BitArray(nodes.Length);
-        var maxScore = int.MinValue;
-        for (int i = 0; i < 1 << flowPositive.Length; i++)
+        var flowPositive = flow.Select((f, i) => i).Where(i => flow[i] > 0).Union(new []{ first}).ToArray();
+        var bitmaskMax = 1 << flowPositive.Length;
+        var scores = new int[26, flowPositive.Length, bitmaskMax];
+        for (int time = 1; time < 26; time++)
         {
-            for (int j = 0; j < flowPositive.Length; j++)
+            Parallel.For(0, flowPositive.Length, (node) =>
             {
-                opened[flowPositive[j]] = (i & (1 << j)) > 0;
-            }
-            var a = Solve(26,first, opened);
-            for (int j = 0; j < flowPositive.Length; j++)
-            {
-                opened[flowPositive[j]] = !((i & (1 << j)) > 0);
-            }
-            var b = Solve(26, first, opened);
-            var sum = a+ b;
-            maxScore = Math.Max(maxScore, sum);
-        }
-
-        return maxScore.ToString();
-
-        int Solve(int timeLeft, int nodeIndex, BitArray? opened = null)
-        {
-            opened ??= new(nodes.Length);
-            var possibleNodes = Enumerable.Range(0, nodes.Length).Where(i => flow[i] > 0 && !opened[i]).ToArray();
-            var bestScore = int.MinValue;
-            foreach (var node in possibleNodes)
-            {
-                var distance = distances[nodeIndex, node];
-                var newTime = timeLeft - 1 - distance;
-                if (newTime >= 0)
+                var nodemask = 1 << node;
+                for (int bitmask = 0; bitmask < bitmaskMax; bitmask++)
                 {
-                    opened[node] = true;
-                    var score = newTime * flow[node] + Solve(newTime, node, opened);
-                    bestScore = Math.Max(bestScore, score);
-                    opened[node] = false;
+                    var score = scores[time, node, bitmask];
+                    if ((bitmask & nodemask) > 0)
+                    {
+                        score = Math.Max(score, scores[time - 1, node, bitmask - nodemask] + flow[flowPositive[node]] * time);
+                    }
+                    for (int adjacent = 0; adjacent < flowPositive.Length; adjacent++)
+                    {
+                        var distance = distances[flowPositive[node], flowPositive[adjacent]];
+                        if (distance < time)
+                        {
+                            score = Math.Max(score, scores[time - distance, adjacent, bitmask]);
+                        }
+                    }
+                    scores[time, node, bitmask] = score;
                 }
-            }
-            return Math.Max(bestScore, 0);
+            });
         }
+
+        var aa = flowPositive.Length - 1;
+        var bestScore = int.MinValue; ;
+        for (int bitmaskHuman = 0; bitmaskHuman < bitmaskMax; bitmaskHuman++)
+        {
+            var bitmaskElephant = (bitmaskMax - 1) & ~bitmaskHuman;
+            bestScore = Math.Max(bestScore, scores[25, aa, bitmaskHuman] + scores[25, aa, bitmaskElephant]);
+        }
+        return bestScore.ToString();
     }
 }
