@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Launcher;
@@ -37,16 +38,28 @@ internal class SolutionCache
         {
             var correctAnswer = File.ReadAllText(localPath);
             return correctAnswer == answer ? PostResult.Right : PostResult.Wrong;
-        }    
+        }
 
         var input = Network.Post($"https://adventofcode.com/{year}/day/{day}/answer", level, answer);
+        if (input.Contains("You don't seem to be solving the right level"))
+        {
+            var source = Network.Get($"https://adventofcode.com/{year}/day/{day}");
+            var answers = Regex.Matches(source, "Your puzzle answer was <code>(.*?)</code>").Select(match => match.Groups[1].Value).ToArray();
+            for (int i = 0; i < answers.Length; i++)
+            {
+                localPath = GetLocalPath(year, day, i + 1);
+                new FileInfo(localPath).Directory!.Create();
+                File.WriteAllText(localPath, answers[i]);
+            }
+            return SubmitSolution(year, day, level, answer);
+        }
         if (input.Contains("That's the right answer"))
         {
             new FileInfo(localPath).Directory!.Create();
             File.WriteAllText(localPath, answer);
             return PostResult.Right;
         }
-        else if(input.Contains("You gave an answer too recently;"))
+        else if (input.Contains("You gave an answer too recently;"))
         {
             return PostResult.RateLimited;
         }
