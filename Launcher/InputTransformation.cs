@@ -16,9 +16,13 @@ internal class InputTransformation
         if (parameter is not null && parameter.GetCustomAttribute<RemoveEmptyAttribute>() is not null)
             splitOptions |= StringSplitOptions.RemoveEmptyEntries;
 
+        var trim = false;
+        if(parameter is not null && parameter.GetCustomAttribute<TrimAttribute>() is not null)
+            trim = true;
+
         if (targetType == typeof(string))
         {
-            return input;
+            return trim ? input.Trim() : input;
         }
         if (targetType == typeof(string[]))
         {
