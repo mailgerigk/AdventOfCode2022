@@ -29,13 +29,16 @@ internal class ProblemRunner
         return (year, day);
     }
 
-    public static ImmutableArray<ProblemResult> Run(bool benchmark = true)
+    public static ImmutableArray<ProblemResult> Run(int minYear = 0, bool benchmark = true)
     {
         var tuples = new List<(Type type, MethodInfo method, int year, int day, int level)>();
         foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes()))
         {
             if (ParseYearDay(type.FullName!) is (int year, int day))
             {
+                if (year < minYear)
+                    continue;
+
                 for (int i = 1; i < 3; i++)
                 {
                     if (type.GetMethod($"Part{i}") is MethodInfo method && method.IsStatic)
