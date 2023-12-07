@@ -21,9 +21,9 @@ public static class StringExtensions
             return string.Empty;
         return str.Substring(index);
     }
-    public static int ParseInt(this string str)
+    public static long ParseInt(this string str)
     {
-        return int.Parse(str);
+        return long.Parse(str);
     }
     public static List<long> ParseInts(this string str, int capacity = 8)
     {
