@@ -29,7 +29,7 @@ internal class ProblemRunner
         return (year, day);
     }
 
-    public static ImmutableArray<ProblemResult> Run(int minYear = 0, bool benchmark = true)
+    public static ImmutableArray<ProblemResult> Run(int minYear = 0, bool runWithExample = true, bool benchmark = true)
     {
         var tuples = new List<(Type type, MethodInfo method, int year, int day, int level)>();
         foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetTypes()))
@@ -52,7 +52,7 @@ internal class ProblemRunner
         var stopwatch = new Stopwatch();
         foreach (var (type, method, year, day, level) in tuples)
         {
-            if(method.GetCustomAttribute<ExampleAttribute>() is ExampleAttribute example)
+            if(runWithExample && method.GetCustomAttribute<ExampleAttribute>() is ExampleAttribute example)
             {
                 RunMethodWithInput(example.Input, example.Expected, true);
             }
