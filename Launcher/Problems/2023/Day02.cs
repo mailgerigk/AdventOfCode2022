@@ -17,7 +17,7 @@ internal class Day02
             {"green", 13 },
             {"blue", 14 },
         };
-        var sum = 0l;
+        var sum = 0L;
         foreach (var line in lines)
         {
             var splits = line.Split(':');
@@ -52,7 +52,7 @@ internal class Day02
     [Example(exampleInput, "2286")]
     public static string Part2([RemoveEmpty] string[] lines)
     {
-        var sum = 0l;
+        var sum = 0L;
         foreach (var line in lines)
         {
             var bag = new Dictionary<string, long>();
@@ -80,7 +80,7 @@ internal class Day02
                 }
             }
 
-            sum += bag.Aggregate(1l, (a, k) => a * k.Value);
+            sum += bag.Aggregate(1L, (a, k) => a * k.Value);
         }
         return sum.ToString();
     }
