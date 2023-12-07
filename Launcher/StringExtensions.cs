@@ -25,4 +25,24 @@ public static class StringExtensions
     {
         return int.Parse(str);
     }
+    public static List<long> ParseInts(this string str, int capacity = 8)
+    {
+        var list = new List<long>(capacity);
+        for (int i = 0; i < str.Length; i++)
+        {
+            if (char.IsDigit(str[i]))
+            {
+                long num = str[i] - '0';
+                i++;
+                while (i < str.Length && char.IsDigit(str[i]))
+                {
+                    num = num * 10 + str[i] - '0';
+                    i++;
+                }
+                i--;
+                list.Add(num);
+            }
+        }
+        return list;
+    }
 }
