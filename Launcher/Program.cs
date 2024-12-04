@@ -3,7 +3,7 @@
 using System.Diagnostics;
 
 var stopwatch = Stopwatch.StartNew();
-var results = ProblemRunner.Run(minYear: 2023, runWithExample: true, benchmark: false);
+var results = ProblemRunner.Run(minYear: 2024, runWithExample: true, benchmark: false);
 stopwatch.Stop();
 
 foreach (var result in results)

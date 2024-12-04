@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2023;
+﻿namespace Launcher.Problems._2023;
 internal class Day01
 {
     const string exampleInput = "1abc2\r\npqr3stu8vwx\r\na1b2c3d4e5f\r\ntreb7uchet";
@@ -21,5 +15,5 @@ internal class Day01
         var digits = new List<string>{ "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
         Func<string, string> replace = seed => digits.Aggregate(seed, (a, s) => a.Replace(s, $"{s}{digits.IndexOf(s) + 1}{s}"));
         return Part1(lines.Select(replace).ToArray());
-    }    
+    }
 }

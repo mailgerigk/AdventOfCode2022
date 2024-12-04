@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2022;
+﻿namespace Launcher.Problems._2022;
 internal class Day04
 {
     public static string Part1(List<List<int>> ints)

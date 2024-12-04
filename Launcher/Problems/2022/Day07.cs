@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2022;
+﻿namespace Launcher.Problems._2022;
 internal class Day07
 {
     static (HashSet<string> dirs, Dictionary<string, int> files) ParseFilesystem(string[] lines)

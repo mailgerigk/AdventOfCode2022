@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Launcher;
 internal class InputTransformation
@@ -17,7 +11,7 @@ internal class InputTransformation
             splitOptions |= StringSplitOptions.RemoveEmptyEntries;
 
         var trim = false;
-        if(parameter is not null && parameter.GetCustomAttribute<TrimAttribute>() is not null)
+        if (parameter is not null && parameter.GetCustomAttribute<TrimAttribute>() is not null)
             trim = true;
 
         if (targetType == typeof(string))
@@ -32,7 +26,7 @@ internal class InputTransformation
         {
             return input.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
         }
-        if(targetType == typeof(int[][]))
+        if (targetType == typeof(int[][]))
         {
             return input.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(line => line.Select(c => c - '0').ToArray()).ToArray();
         }
@@ -69,7 +63,7 @@ internal class InputTransformation
             }
             return result;
         }
-        if(targetType == typeof(float[]))
+        if (targetType == typeof(float[]))
         {
             return input.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(float.Parse).ToArray();
         }

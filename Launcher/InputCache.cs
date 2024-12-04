@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher;
+﻿namespace Launcher;
 internal class InputCache
 {
     static string InputBasePath => Path.Combine(Paths.BasePath, "inputs");
@@ -15,9 +8,9 @@ internal class InputCache
     static string DownloadInput(int year, int day) => Network.Get($"https://adventofcode.com/{year}/day/{day}/input");
 
     public static string GetInput(int year, int day)
-    { 
+    {
         var localPath = GetLocalPath(year, day);
-        if(File.Exists(localPath))
+        if (File.Exists(localPath))
             return File.ReadAllText(localPath);
 
         var input = DownloadInput(year, day);

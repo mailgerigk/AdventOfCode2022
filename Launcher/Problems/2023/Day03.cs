@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2023;
+﻿namespace Launcher.Problems._2023;
 internal class Day03
 {
     static (List<(int number, int x, int y, int end)> parts, List<(int x, int y)> gears) Collect(string[] lines)

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2022;
+﻿namespace Launcher.Problems._2022;
 internal class Day18
 {
     const string exampleInput = "2,2,2\r\n1,2,2\r\n3,2,2\r\n2,1,2\r\n2,3,2\r\n2,2,1\r\n2,2,3\r\n2,2,4\r\n2,2,6\r\n1,2,5\r\n3,2,5\r\n2,1,5\r\n2,3,5";
@@ -64,7 +56,7 @@ internal class Day18
         var queue = new Queue<(int x, int y, int z)>();
         queue.Enqueue((min.x - 1, min.y - 1, min.z - 1));
 
-        while(queue.Any())
+        while (queue.Any())
         {
             var (cubeX, cubeY, cubeZ) = queue.Dequeue();
             foreach (var offset in offsets)
@@ -72,7 +64,7 @@ internal class Day18
                 var point = (cubeX + offset.x, cubeY + offset.y, cubeZ + offset.z);
                 if (!IsInBounds(point) || set.Contains(point))
                     continue;
-                if(water.Add(point))
+                if (water.Add(point))
                     queue.Enqueue(point);
             }
         }

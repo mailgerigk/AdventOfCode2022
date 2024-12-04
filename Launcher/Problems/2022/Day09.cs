@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2022;
+﻿namespace Launcher.Problems._2022;
 internal class Day09
 {
     static string Solve(string[] commands, List<List<int>> arguments, int knotCount)
@@ -45,7 +39,7 @@ internal class Day09
                     if ((distance >= 2 && (d.x == 0 || d.y == 0)) || (distance >= 3))
                     {
                         knots[j] = (tail.x + Math.Sign(d.x), tail.y + Math.Sign(d.y));
-                        if(j == knotCount - 1)
+                        if (j == knotCount - 1)
                         {
                             positions.Add(knots.Last());
                         }

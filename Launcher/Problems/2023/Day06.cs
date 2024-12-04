@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2023;
+﻿namespace Launcher.Problems._2023;
 internal class Day06
 {
     static int GetCount(long t, long d)
@@ -14,7 +8,7 @@ internal class Day06
         var sqrt = Math.Sqrt(t2 - d4);
         var lower = (t - sqrt) * 0.5;
         var upper = (sqrt + t) * 0.5;
-        if((int)upper == upper)
+        if ((int)upper == upper)
         {
             upper--;
         }

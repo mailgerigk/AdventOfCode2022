@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Launcher;
 internal class ProblemRunner
@@ -52,7 +46,7 @@ internal class ProblemRunner
         var stopwatch = new Stopwatch();
         foreach (var (type, method, year, day, level) in tuples)
         {
-            if(runWithExample && method.GetCustomAttribute<ExampleAttribute>() is ExampleAttribute example)
+            if (runWithExample && method.GetCustomAttribute<ExampleAttribute>() is ExampleAttribute example)
             {
                 RunMethodWithInput(example.Input, example.Expected, true);
             }
@@ -65,7 +59,7 @@ internal class ProblemRunner
                 var argumentList = new List<object>();
                 foreach (var parameter in method.GetParameters())
                 {
-                    if(parameter.ParameterType == typeof(bool))
+                    if (parameter.ParameterType == typeof(bool))
                     {
                         argumentList.Add(isExample);
                     }
@@ -86,7 +80,7 @@ internal class ProblemRunner
                 if (invokeReturn is string answer)
                 {
                     var postResult = SolutionCache.PostResult.Wrong;
-                    if(output is string)
+                    if (output is string)
                     {
                         postResult = answer == output ? SolutionCache.PostResult.Right : SolutionCache.PostResult.Wrong;
                     }
@@ -101,6 +95,6 @@ internal class ProblemRunner
         }
         return results.ToImmutable();
 
-        
+
     }
 }

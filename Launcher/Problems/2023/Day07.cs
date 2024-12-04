@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2023;
+﻿namespace Launcher.Problems._2023;
 internal class Day07
 {
     static int HandRank(IEnumerable<char> cards)
@@ -50,7 +44,7 @@ internal class Day07
         static int CardRank(char card) => Cards.IndexOf(card);
         static IEnumerable<string> EnumerateJokerHands(IEnumerable<char> cards)
         {
-            if(cards.Contains('J'))
+            if (cards.Contains('J'))
             {
                 var s = new string(cards.ToArray());
                 var i = s.IndexOf('J');

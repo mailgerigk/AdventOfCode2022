@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
+﻿using System.Collections;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Launcher.Problems._2022;
 internal class Day16

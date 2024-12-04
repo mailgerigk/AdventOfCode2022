@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher;
+﻿namespace Launcher;
 public static class StringExtensions
 {
     public static string Before(this string str, string value)

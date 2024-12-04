@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2022;
+﻿namespace Launcher.Problems._2022;
 internal class Day17
 {
     const string exampleInput = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
@@ -96,7 +89,7 @@ internal class Day17
                     {
                         var px = x + position.x;
                         var py = y + position.y;
-                        while(map.Count < py + 1)
+                        while (map.Count < py + 1)
                         {
                             map.Add(0);
                         }

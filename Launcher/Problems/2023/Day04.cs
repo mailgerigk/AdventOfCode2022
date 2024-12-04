@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher.Problems._2023;
+﻿namespace Launcher.Problems._2023;
 internal class Day04
 {
     const string exampleInput = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\r\nCard 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19\r\nCard 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1\r\nCard 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83\r\nCard 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36\r\nCard 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
@@ -29,7 +22,7 @@ internal class Day04
                 if (char.IsDigit(line[j]))
                 {
                     var index = 0;
-                    if (char.IsDigit(line[j+1]))
+                    if (char.IsDigit(line[j + 1]))
                     {
                         index = (line[j] - '0') * 10 + line[j + 1] - '0';
                         j += 2;
@@ -49,7 +42,7 @@ internal class Day04
             j++;
 
             var k = 0;
-            while(j < line.Length)
+            while (j < line.Length)
             {
                 if (char.IsDigit(line[j]))
                 {

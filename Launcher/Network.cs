@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Launcher;
+﻿namespace Launcher;
 internal class Network
 {
     static string CookiePath => Path.Combine(Paths.BasePath, "cookie.txt");
